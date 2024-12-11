@@ -5,6 +5,7 @@ import html2canvas from "html2canvas";
 import { jsPDF } from "jspdf";
 import "../styles/editor.scss";
 import AddPageButton from "./AddPageButton";
+import RightClickMenu from "./RightClickMenu";
 
 const A4_PAGE_HEIGHT = 1122;
 const A4_PAGE_WIDTH = 794;
@@ -14,59 +15,10 @@ const Editor: React.FC = () => {
   const pagesRef = useRef<(HTMLDivElement | null)[]>([]);
   const activeElementRef = useRef<HTMLDivElement | null>(null);
 
-  // Verificar el desbordamiento
-  const checkOverflow = () => {
-    pagesRef.current.forEach((page, index) => {
-      if (page) {
-        const stripContent = page.querySelector(".strip-content") as HTMLDivElement;
-        
-        if (stripContent.scrollHeight > stripContent.clientHeight) {
-          setPagesCount(pagesCount + 1);
-        }
-      }
-    });
+  const addNewPage = () => {
+    setPagesCount((prev) => prev + 1);
   };
 
-  // Aplicar clase de texto
-  const applyTextClass = (className: string) => {
-    const selection = window.getSelection();
-    if (selection && selection.rangeCount > 0) {
-      const range = selection.getRangeAt(0);
-
-      const span = document.createElement("span");
-      span.className = className;
-
-      if (!range.collapsed) {
-        range.surroundContents(span);
-        selection.removeAllRanges();
-      }
-    }
-    checkOverflow();
-  };
-
-  // Cambiar tamaño de texto
-  const adjustTextSize = (change: number) => {
-    const selection = window.getSelection();
-    if (selection && selection.rangeCount > 0) {
-      const range = selection.getRangeAt(0);
-      const selectedNode = range.startContainer.parentElement;
-
-      if (selectedNode && selectedNode.nodeType === 1) {
-        const currentSize = parseFloat(
-          window.getComputedStyle(selectedNode).getPropertyValue("font-size")
-        );
-
-        const newSize = Math.max(currentSize + change, 8);
-        selectedNode.style.fontSize = `${newSize}px`;
-      }
-    }
-    checkOverflow();
-  };
-
-  // Añadir nueva página manualmente
-  const addNewPage = () => setPagesCount(pagesCount + 1);
-
-  // Descargar PDF
   const handleDownloadPDF = async () => {
     const pdf = new jsPDF("p", "pt", "a4");
 
@@ -90,6 +42,187 @@ const Editor: React.FC = () => {
     pdf.save("document.pdf");
   };
 
+  const applyTextClass = (className: string) => {
+    const selection = window.getSelection();
+    if (selection && selection.rangeCount > 0) {
+      const range = selection.getRangeAt(0);
+
+      const span = document.createElement("span");
+      span.className = className;
+
+      if (!range.collapsed) {
+        range.surroundContents(span);
+        selection.removeAllRanges();
+      }
+    }
+    reflowContent();
+  };
+
+  const adjustTextSize = (change: number) => {
+    const selection = window.getSelection();
+    if (selection && selection.rangeCount > 0) {
+      const range = selection.getRangeAt(0);
+      const selectedNode = range.startContainer.parentElement;
+
+      if (selectedNode && selectedNode.nodeType === 1) {
+        const currentSize = parseFloat(
+          window.getComputedStyle(selectedNode).getPropertyValue("font-size")
+        );
+        const newSize = Math.max(currentSize + change, 8);
+        (selectedNode as HTMLElement).style.fontSize = `${newSize}px`;
+      }
+    }
+    reflowContent();
+  };
+
+  // Función para redistribuir contenido (reflow)
+  const reflowContent = () => {
+    for (let i = 0; i < pagesCount; i++) {
+      const page = pagesRef.current[i];
+      if (!page) continue;
+      const stripContent = page.querySelector(".strip-content") as HTMLDivElement;
+      
+      while (stripContent.scrollHeight > stripContent.clientHeight) {
+        let nextPageIndex = i + 1;
+        if (nextPageIndex >= pagesCount) {
+          addNewPage();
+          nextPageIndex = i + 1;
+        }
+
+        const nextPage = pagesRef.current[nextPageIndex];
+        const nextStrip = nextPage?.querySelector(".strip-content") as HTMLDivElement;
+        if (!nextStrip) break;
+
+        const lastChild = stripContent.lastChild;
+        if (!lastChild) break;
+
+        nextStrip.insertBefore(lastChild, nextStrip.firstChild);
+      }
+    }
+  };
+
+  const handleInput = () => {
+    reflowContent();
+  };
+
+  // Insertar un elemento en el editor (al final del contenido actual del foco)
+  // o en el cursor si lo deseas extender.
+  const insertEditableElement = (element: HTMLElement) => {
+    // Insertaremos el elemento donde se encuentre el foco:
+    const editor = document.activeElement as HTMLDivElement;
+    // Verificamos que el focus esté en una .strip-content
+    const stripContent = editor?.closest(".strip-content") as HTMLDivElement;
+    const selection = window.getSelection();
+    if (stripContent && selection && selection.rangeCount > 0) {
+      const range = selection.getRangeAt(0);
+      const wrapper = document.createElement("div");
+      wrapper.className = "editable-element";
+      wrapper.contentEditable = "true";
+      wrapper.appendChild(element);
+      wrapper.appendChild(document.createElement("br"));
+
+      range.insertNode(wrapper);
+      // Colocar el cursor después del elemento insertado
+      range.setStartAfter(wrapper);
+      range.setEndAfter(wrapper);
+      selection.removeAllRanges();
+      selection.addRange(range);
+    } else if (stripContent) {
+      // Si no hay selección válida, insertamos al final
+      const wrapper = document.createElement("div");
+      wrapper.className = "editable-element";
+      wrapper.contentEditable = "true";
+      wrapper.appendChild(element);
+      wrapper.appendChild(document.createElement("br"));
+      stripContent.appendChild(wrapper);
+    }
+    reflowContent();
+  };
+
+  // Funciones específicas de inserción (integradas desde RightClickMenu)
+  const onInsertImage = (file: File) => {
+    const img = document.createElement("img");
+    img.src = URL.createObjectURL(file);
+    img.alt = "Imagen Cargada";
+    img.className = "inserted-image";
+    insertEditableElement(img);
+  };
+
+  const onInsertSeparator = () => {
+    const separator = document.createElement("hr");
+    separator.className = "custom-separator";
+    insertEditableElement(separator);
+  };
+
+  const onInsertTable = (rows: number, columns: number, title: string) => {
+    const table = document.createElement("div");
+    table.className = "card";
+
+    const tableTitle = document.createElement("div");
+    tableTitle.className = "card__title";
+    tableTitle.textContent = title || "Tabla Sin Título";
+
+    const tableData = document.createElement("div");
+    tableData.className = "card__data";
+
+    for (let i = 0; i < rows; i++) {
+      const rowRight = document.createElement("div");
+      rowRight.className = "card__right";
+
+      const rowLeft = document.createElement("div");
+      rowLeft.className = "card__left";
+
+      for (let j = 0; j < columns; j++) {
+        const cellRight = document.createElement("div");
+        cellRight.className = "item";
+        cellRight.contentEditable = "true";
+        cellRight.textContent = "Dato";
+
+        const cellLeft = document.createElement("div");
+        cellLeft.className = "item";
+        cellLeft.contentEditable = "true";
+        cellLeft.textContent = "Dato";
+
+        rowRight.appendChild(cellRight);
+        rowLeft.appendChild(cellLeft);
+      }
+
+      tableData.appendChild(rowRight);
+      tableData.appendChild(rowLeft);
+    }
+
+    table.appendChild(tableTitle);
+    table.appendChild(tableData);
+    insertEditableElement(table);
+  };
+
+  const onInsertLink = (url: string) => {
+    if (url.trim()) {
+      const link = document.createElement("a");
+      link.href = url;
+      link.target = "_blank";
+      link.className = "link-button";
+      link.textContent = "Visitar Enlace";
+      insertEditableElement(link);
+    }
+  };
+
+  const onInsertEmoji = (emoji: string) => {
+    const span = document.createElement("span");
+    span.textContent = emoji;
+    insertEditableElement(span);
+  };
+
+  // Cuando se añade una nueva página, darle el foco automáticamente
+  useEffect(() => {
+    const lastPageIndex = pagesCount - 1;
+    const lastPage = pagesRef.current[lastPageIndex];
+    if (lastPage) {
+      const stripContent = lastPage.querySelector(".strip-content") as HTMLDivElement;
+      stripContent?.focus();
+    }
+  }, [pagesCount]);
+
   return (
     <div className="editor-container">
       <Header onDownloadPDF={handleDownloadPDF} />
@@ -97,6 +230,15 @@ const Editor: React.FC = () => {
         onIncreaseTextSize={() => adjustTextSize(2)}
         onDecreaseTextSize={() => adjustTextSize(-2)}
         onSelectClass={applyTextClass}
+      />
+
+      {/* Integración del menú contextual */}
+      <RightClickMenu
+        onInsertImage={onInsertImage}
+        onInsertSeparator={onInsertSeparator}
+        onInsertTable={onInsertTable}
+        onInsertLink={onInsertLink}
+        onInsertEmoji={onInsertEmoji}
       />
 
       <div className="pages-container">
@@ -122,10 +264,11 @@ const Editor: React.FC = () => {
               className="strip-content"
               contentEditable
               suppressContentEditableWarning
-              onInput={checkOverflow}
+              onInput={handleInput}
               onFocus={(e) =>
                 (activeElementRef.current = e.target as HTMLDivElement)
               }
+              style={{ outline: "none" }}
             ></div>
 
             <div className="footer">
