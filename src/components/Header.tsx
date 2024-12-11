@@ -9,7 +9,7 @@ interface HeaderProps {
 const Header: React.FC<HeaderProps> = ({ onDownloadPDF }) => {
   return (
     <header className="header">
-      <img src="src/assets/logoPurple.png" alt="Logo" className="logo" />
+      <img src="./logoPurple.png" alt="Logo" className="logo" />
       <DownloadButton onClick={onDownloadPDF} />
     </header>
   );

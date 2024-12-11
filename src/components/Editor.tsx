@@ -140,7 +140,7 @@ const Editor: React.FC = () => {
             }}
           >
             <img
-              src="src/assets/logoPurple.png"
+              src="./logoPurple.png"
               alt="Logo"
               className="page-logo"
               style={{ width: "250px" }}
