@@ -105,114 +105,6 @@ const Editor: React.FC = () => {
     reflowContent();
   };
 
-  // Insertar un elemento en el editor (al final del contenido actual del foco)
-  // o en el cursor si lo deseas extender.
-  const insertEditableElement = (element: HTMLElement) => {
-    // Insertaremos el elemento donde se encuentre el foco:
-    const editor = document.activeElement as HTMLDivElement;
-    // Verificamos que el focus esté en una .strip-content
-    const stripContent = editor?.closest(".strip-content") as HTMLDivElement;
-    const selection = window.getSelection();
-    if (stripContent && selection && selection.rangeCount > 0) {
-      const range = selection.getRangeAt(0);
-      const wrapper = document.createElement("div");
-      wrapper.className = "editable-element";
-      wrapper.contentEditable = "true";
-      wrapper.appendChild(element);
-      wrapper.appendChild(document.createElement("br"));
-
-      range.insertNode(wrapper);
-      // Colocar el cursor después del elemento insertado
-      range.setStartAfter(wrapper);
-      range.setEndAfter(wrapper);
-      selection.removeAllRanges();
-      selection.addRange(range);
-    } else if (stripContent) {
-      // Si no hay selección válida, insertamos al final
-      const wrapper = document.createElement("div");
-      wrapper.className = "editable-element";
-      wrapper.contentEditable = "true";
-      wrapper.appendChild(element);
-      wrapper.appendChild(document.createElement("br"));
-      stripContent.appendChild(wrapper);
-    }
-    reflowContent();
-  };
-
-  // Funciones específicas de inserción (integradas desde RightClickMenu)
-  const onInsertImage = (file: File) => {
-    const img = document.createElement("img");
-    img.src = URL.createObjectURL(file);
-    img.alt = "Imagen Cargada";
-    img.className = "inserted-image";
-    insertEditableElement(img);
-  };
-
-  const onInsertSeparator = () => {
-    const separator = document.createElement("hr");
-    separator.className = "custom-separator";
-    insertEditableElement(separator);
-  };
-
-  const onInsertTable = (rows: number, columns: number, title: string) => {
-    const table = document.createElement("div");
-    table.className = "card";
-
-    const tableTitle = document.createElement("div");
-    tableTitle.className = "card__title";
-    tableTitle.textContent = title || "Tabla Sin Título";
-
-    const tableData = document.createElement("div");
-    tableData.className = "card__data";
-
-    for (let i = 0; i < rows; i++) {
-      const rowRight = document.createElement("div");
-      rowRight.className = "card__right";
-
-      const rowLeft = document.createElement("div");
-      rowLeft.className = "card__left";
-
-      for (let j = 0; j < columns; j++) {
-        const cellRight = document.createElement("div");
-        cellRight.className = "item";
-        cellRight.contentEditable = "true";
-        cellRight.textContent = "Dato";
-
-        const cellLeft = document.createElement("div");
-        cellLeft.className = "item";
-        cellLeft.contentEditable = "true";
-        cellLeft.textContent = "Dato";
-
-        rowRight.appendChild(cellRight);
-        rowLeft.appendChild(cellLeft);
-      }
-
-      tableData.appendChild(rowRight);
-      tableData.appendChild(rowLeft);
-    }
-
-    table.appendChild(tableTitle);
-    table.appendChild(tableData);
-    insertEditableElement(table);
-  };
-
-  const onInsertLink = (url: string) => {
-    if (url.trim()) {
-      const link = document.createElement("a");
-      link.href = url;
-      link.target = "_blank";
-      link.className = "link-button";
-      link.textContent = "Visitar Enlace";
-      insertEditableElement(link);
-    }
-  };
-
-  const onInsertEmoji = (emoji: string) => {
-    const span = document.createElement("span");
-    span.textContent = emoji;
-    insertEditableElement(span);
-  };
-
   // Cuando se añade una nueva página, darle el foco automáticamente
   useEffect(() => {
     const lastPageIndex = pagesCount - 1;
@@ -232,14 +124,8 @@ const Editor: React.FC = () => {
         onSelectClass={applyTextClass}
       />
 
-      {/* Integración del menú contextual */}
-      <RightClickMenu
-        onInsertImage={onInsertImage}
-        onInsertSeparator={onInsertSeparator}
-        onInsertTable={onInsertTable}
-        onInsertLink={onInsertLink}
-        onInsertEmoji={onInsertEmoji}
-      />
+      {/* Integración del menú contextual sin props adicionales */}
+      <RightClickMenu />
 
       <div className="pages-container">
         {Array.from({ length: pagesCount }).map((_, index) => (

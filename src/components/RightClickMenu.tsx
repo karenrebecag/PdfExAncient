@@ -6,16 +6,14 @@ const RightClickMenu: React.FC = () => {
   const [overlayVisible, setOverlayVisible] = useState(false);
   const [popupType, setPopupType] = useState<string | null>(null);
 
-  // Mostrar menú contextual
-  const handleContextMenu = (event: React.MouseEvent) => {
+  const handleContextMenu = (event: MouseEvent) => {
     event.preventDefault();
     setMenuPosition({
       x: event.pageX,
       y: event.pageY,
     });
   };
-
-  // Cerrar menú contextual y ventanas emergentes
+  
   const handleClickOutside = (event: MouseEvent) => {
     const target = event.target as HTMLElement;
     if (!target.closest(".popup") && !target.closest(".right-click-menu")) {
@@ -34,7 +32,6 @@ const RightClickMenu: React.FC = () => {
     };
   }, []);
 
-  // Manejar acciones de inserción
   const handleAction = (type: string) => {
     setPopupType(type);
     setOverlayVisible(true);
@@ -45,7 +42,6 @@ const RightClickMenu: React.FC = () => {
     setOverlayVisible(false);
   };
 
-  // Función genérica de inserción
   const insertEditableElement = (element: HTMLElement) => {
     const editor = document.querySelector(".strip-content");
     if (editor) {
@@ -59,7 +55,6 @@ const RightClickMenu: React.FC = () => {
     closeOverlay();
   };
 
-  // Funciones de inserción específicas
   const handleAddImage = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
