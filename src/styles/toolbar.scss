@@ -1,0 +1,84 @@
+.toolbar {
+    display: flex;
+    justify-content: flex-start;
+    gap: 10px;
+    margin-bottom: 10px;
+    background-color: #ffffff;
+    padding: 2%;
+    border-radius: 30px;
+    -webkit-box-shadow: 10px 10px 174px -66px rgba(0,0,0,0.23);
+    -moz-box-shadow: 10px 10px 174px -66px rgba(0,0,0,0.23);
+    box-shadow: 10px 10px 174px -66px rgba(0,0,0,0.23);
+    
+    button {
+      padding: 8px 16px;
+      font-size: 14px;
+      font-weight: bold;
+      background: #ffffff;
+      color: rgb(0, 0, 0);
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+  
+      &:hover {
+        background: #33333319;
+      }
+    }
+  }
+
+
+  .buttonSmall {
+    background: none;
+    border: none;
+    padding: 15px;
+    border-radius: 10px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .buttonSmall:hover {
+    background: rgba(170, 170, 170, 0.062);
+    transition: background 0.5s ease;
+  }
+  
+  .buttonSmall svg {
+    color: #000000;
+    width: 14px;
+    height: 14px;
+    transition: color 0.3s ease;
+  }
+  
+  .buttonSmall:hover svg {
+    color: #aaa;
+  }
+
+
+  .buttonSmallColors {
+    background: none;
+    border: none;
+    padding: 15px;
+    border-radius: 10px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .buttonSmallColors:hover {
+    background: rgba(170, 170, 170, 0.062);
+    transition: background 0.5s ease;
+  }
+  
+  .buttonSmallColors svg {
+    color: #000000;
+    width: 24px;
+    height: 24px;
+    transition: color 0.3s ease;
+  }
+  
+  .buttonSmallColors:hover svg {
+    color: #aaa; /* Cambia el color del ícono en hover, si lo deseas */
+  }

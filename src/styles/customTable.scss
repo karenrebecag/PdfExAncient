@@ -1,0 +1,16 @@
+.custom-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+  
+    td {
+      border: 1px solid #ccc;
+      padding: 10px;
+      min-width: 100px;
+      text-align: left;
+    }
+  
+    tr:nth-child(even) {
+      background: #f9f9f9;
+    }
+  }

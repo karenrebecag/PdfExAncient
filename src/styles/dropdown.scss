@@ -1,0 +1,111 @@
+/* Estilos del Selector de Textos */
+
+.dropdown {
+    border: 1px solid #c1c2c5;
+    border-radius: 12px;
+    background-color: white;
+    display: inline-block;
+    width: 180px;
+    position: relative;
+  }
+  
+  .trigger {
+    cursor: pointer;
+    width: 100%;
+    padding: 10px;
+    font-weight: 600;
+    text-align: left;
+    background-color: white;
+    border: none;
+    outline: none;
+    border-radius: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .trigger::after {
+    content: "▼";
+    font-size: 16px;
+    margin-left: 10px;
+  }
+  
+  .list {
+    position: absolute;
+    top: calc(100% + 5px);
+    left: 0;
+    width: 100%;
+    background: white;
+    border: 1px solid #c1c2c5;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    max-height: 200px;
+    overflow-y: auto;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 300ms ease;
+    z-index: 99;
+  }
+  
+  .visible {
+    opacity: 1;
+    visibility: visible;
+  }
+  
+  .listitem {
+    padding: 10px;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 300ms ease;
+  
+    &:hover {
+      background: #f4f4f4;
+    }
+  }
+  
+  /* Estilos de Texto Personalizados */
+  .style-title-main {
+    font-size: 36px;
+    font-weight: bold;
+    color: #333;
+    font-family: "Montserrat", sans-serif;
+  }
+  
+  .style-title-secondary {
+    font-size: 28px;
+    font-weight: 600;
+    color: #5550ff;
+    font-family: "Montserrat", sans-serif;
+  }
+  
+  .style-body-main {
+    font-size: 18px;
+    font-weight: normal;
+    color: #333;
+    font-family: "Roboto", sans-serif;
+  }
+  
+  .style-highlight {
+    font-size: 18px;
+    font-weight: bold;
+    color: #ff5722;
+    background: #fff3e0;
+    font-family: "Roboto", sans-serif;
+  }
+  
+  .style-note {
+    font-size: 16px;
+    font-style: italic;
+    color: #757575;
+    font-family: "Georgia", serif;
+  }
+  
+  .style-code {
+    font-size: 16px;
+    font-family: "Courier New", monospace;
+    color: #212121;
+    background: #f5f5f5;
+    padding: 2px 4px;
+    border-radius: 4px;
+  }
