@@ -9,7 +9,6 @@ import BoldIcon from "../assets/icons/BoldIcon";
 import ItalicIcon from "../assets/icons/ItalicIcon";
 import UnderlineIcon from "../assets/icons/UndelineIcon.tsx";
 import BlackFontColorIcon from "../assets/icons/BlackFontColor.tsx";
-import WhiteFontColorIcon from "../assets/icons/WhiteFontColor.tsx";
 import PurpleFontColorIcon from "../assets/icons/PurpleFontColor.tsx";
 import AlignLeftIcon from "../assets/icons/AlignLeftIcon.tsx";
 import AlignCenterIcon from "../assets/icons/AlignCenterIcon";
