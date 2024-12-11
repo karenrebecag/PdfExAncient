@@ -7,7 +7,7 @@ const Footer: React.FC = () => {
       <div className="image-container">
         <img src="/perroPanzon.jpg" alt="Perro Panzón" className="profile-image" />
       </div>
-      <p className="phrase">Llevo dos días peleando con mi computadora para hacer esto</p>
+      <p className="phrase">Dos días peleando con mi computadora para hacer esto. </p>
       <a 
         href="https://github.com/karenrebecag/PdfExAncient" 
         target="_blank" 
