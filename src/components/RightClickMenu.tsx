@@ -1,5 +1,13 @@
+// src/components/RightClickMenu.tsx
 import React, { useState, useEffect } from "react";
 import "../styles/rightClickMenu.scss";
+
+// SVG
+import Clip from "../assets/icons/Clip";
+import Emoji from "../assets/icons/Emoji";
+import PlusImage from "../assets/icons/PlusImage";
+import SeparatorIcon from "../assets/icons/Separator";
+import TableIcon from "../assets/icons/Table";
 
 const RightClickMenu: React.FC = () => {
   const [menuPosition, setMenuPosition] = useState<{ x: number; y: number } | null>(null);
@@ -13,7 +21,7 @@ const RightClickMenu: React.FC = () => {
       y: event.pageY,
     });
   };
-  
+
   const handleClickOutside = (event: MouseEvent) => {
     const target = event.target as HTMLElement;
     if (!target.closest(".popup") && !target.closest(".right-click-menu")) {
@@ -135,31 +143,51 @@ const RightClickMenu: React.FC = () => {
             left: `${menuPosition.x}px`,
           }}
         >
+          {/* Botón Añadir Imagen */}
           <button className="value" onClick={() => handleAction("image")}>
-            Añadir Imagen
+            <div className="button-content">
+              <PlusImage width="20" height="20" className="icon" />
+              <span>Añadir Imagen</span>
+            </div>
             <span className="menu-description">Selecciona una imagen desde tu dispositivo</span>
           </button>
 
+          {/* Botón Añadir Separador */}
           <button className="value" onClick={handleAddSeparator}>
-            Añadir Separador
+            <div className="button-content">
+              <SeparatorIcon width="20" height="20" className="icon" />
+              <span>Añadir Separador</span>
+            </div>
             <span className="menu-description">Inserta una línea divisoria</span>
           </button>
 
+          {/* Botón Añadir Tabla */}
           <button className="value" onClick={() => handleAction("table")}>
-            Añadir Tabla
+            <div className="button-content">
+              <TableIcon width="20" height="20" className="icon" />
+              <span>Añadir Tabla</span>
+            </div>
             <span className="menu-description">Inserta una tabla personalizable</span>
           </button>
 
+          {/* Botón Añadir Enlace */}
           <button className="value" onClick={() => handleAction("link")}>
-            Añadir Enlace
+            <div className="button-content">
+              <Clip width="20" height="20" className="icon" />
+              <span>Añadir Enlace</span>
+            </div>
             <span className="menu-description">Inserta un hipervínculo</span>
           </button>
 
+          {/* Botón Añadir Emoji */}
           <button
             className="value"
             onClick={() => document.execCommand("insertText", false, "😊")}
           >
-            Añadir Emoji
+            <div className="button-content">
+              <Emoji width="20" height="20" className="icon" />
+              <span>Añadir Emoji</span>
+            </div>
             <span className="menu-description">Selecciona un emoji del sistema</span>
           </button>
         </div>

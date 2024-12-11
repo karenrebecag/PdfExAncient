@@ -124,7 +124,6 @@ const Editor: React.FC = () => {
         onSelectClass={applyTextClass}
       />
 
-      {/* Integración del menú contextual sin props adicionales */}
       <RightClickMenu />
 
       <div className="pages-container">
@@ -140,7 +139,7 @@ const Editor: React.FC = () => {
             }}
           >
             <img
-              src="./logoPurple.png"
+              src="/logo.png"
               alt="Logo"
               className="page-logo"
               style={{ width: "250px" }}
